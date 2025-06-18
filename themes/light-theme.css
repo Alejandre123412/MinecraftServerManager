@@ -1,0 +1,17 @@
+.root {
+    -fx-base: #e0e0e0;
+    -fx-background: #ffffff;
+    -fx-text-fill: black;
+    -fx-control-inner-background: #f0f0f0;
+    -fx-accent: #0078d4;
+}
+
+.button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: black;
+    -fx-background-radius: 8;
+}
+
+.tab-pane {
+    -fx-background-color: #ffffff;
+}

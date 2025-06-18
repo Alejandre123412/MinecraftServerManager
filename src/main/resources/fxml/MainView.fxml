@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.text.TextFlow?>
+<BorderPane fx:controller="com.servermanager.minecraft.controllers.MainController"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml">
+
+    <!-- Parte superior: selector de temas -->
+    <top>
+        <HBox alignment="TOP_RIGHT" spacing="10" style="-fx-background-color: #2f3136; -fx-padding: 10;">
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="startServerButton" text="▶ Iniciar" onAction="#onStartServerClicked"/>
+            <Button fx:id="stopServerButton" text="⏹ Parar" onAction="#onStopServerClicked" disable="true"/>
+            <Button fx:id="restartServerButton" text="🔄 Reiniciar" onAction="#onRestartServerClicked" disable="true"/>
+            <Label text="Tema:" style="-fx-text-fill: white;" />
+            <ComboBox fx:id="themeSelector" prefWidth="150" />
+        </HBox>
+    </top>
+
+    <!-- Lado izquierdo: lista de servidores -->
+    <left>
+        <VBox spacing="10" style="-fx-background-color: #1c1d20; -fx-padding: 10;">
+            <Label text="Servidores" style="-fx-text-fill: white;" />
+            <ListView fx:id="serverList" prefWidth="60" style="-fx-background-color: transparent;" />
+            <Button text="➕ Nuevo servidor" onAction="#onNewServerClicked"/>
+        </VBox>
+    </left>
+
+    <!-- Centro: pestañas -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="General">
+                <AnchorPane>
+                    <VBox spacing="15" alignment="CENTER" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20">
+                        <!-- Icono del servidor -->
+                        <Button fx:id="serverIconButton" style="-fx-background-color: transparent;" onAction="#onChangeIconClicked">
+                            <graphic>
+                                <ImageView fx:id="serverIconView" fitHeight="128" fitWidth="128" preserveRatio="true"/>
+                            </graphic>
+                        </Button>
+
+
+                        <!-- Nombre del servidor -->
+                        <HBox spacing="10" alignment="CENTER">
+                            <Label fx:id="serverNameLabel" text="Servidor Ejemplo" style="-fx-font-size: 20px; -fx-text-fill: white;" />
+                            <Button text="Editar" onAction="#onChangeNameClicked" />
+                        </HBox>
+
+                        <!-- Selector de versión -->
+                        <HBox spacing="10" alignment="CENTER">
+                            <Label text="Versión:" style="-fx-text-fill: white;" />
+                            <ComboBox fx:id="versionComboBox" prefWidth="200" />
+                        </HBox>
+
+                        <!-- Descripción -->
+                        <TextArea fx:id="serverDescriptionArea" promptText="Descripción del servidor..." wrapText="true"
+                                  prefWidth="400" prefHeight="100" />
+                    </VBox>
+                </AnchorPane>
+            </Tab>
+            <Tab text="Configuración">
+                <AnchorPane>
+                    <VBox spacing="10" style="-fx-padding: 20;" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+                        <ScrollPane
+                                fx:id="scrollPane"
+                                fitToWidth="true"
+                                prefHeight="200"
+                                VBox.vgrow="ALWAYS">
+
+                            <VBox fx:id="scrollContent" fillWidth="true">
+                                <GridPane fx:id="propertiesGrid" hgap="10" vgap="10" />
+                            </VBox>
+                        </ScrollPane>
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button text="Guardar Cambios" onAction="#onSaveProperties" />
+                        </HBox>
+                    </VBox>
+                </AnchorPane>
+            </Tab>
+            <Tab text="EULA">
+                <AnchorPane>
+                    <VBox spacing="10" style="-fx-padding: 20;" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+
+                        <CheckBox fx:id="eulaCheckBox" text="He leído y acepto los términos del EULA de Minecraft" onAction="#onEulaCheckboxChanged"/>
+
+                        <WebView fx:id="eulaWebView" VBox.vgrow="ALWAYS" />
+
+                    </VBox>
+                </AnchorPane>
+            </Tab>
+            <Tab text="Jugadores">
+                <AnchorPane>
+                    <ScrollPane fitToWidth="true" prefHeight="200" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                        <VBox spacing="20" style="-fx-padding: 20;">
+                            <!-- Whitelist -->
+                            <VBox spacing="10">
+                                <Label text="Whitelist" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="whitelistView" prefHeight="120" />
+                                <HBox spacing="10">
+                                    <TextField fx:id="whitelistInput" promptText="Nombre de jugador..." HBox.hgrow="ALWAYS" />
+                                    <Button text="➕ Añadir" onAction="#onAddWhitelist" />
+                                    <Button text="❌ Quitar" onAction="#onRemoveWhitelist" />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Banned Players -->
+                            <VBox spacing="10">
+                                <Label text="Jugadores Vetados" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="bannedPlayersView" prefHeight="200" />
+                                <HBox spacing="10">
+                                    <TextField fx:id="bannedPlayerInput" promptText="Nombre de jugador..." HBox.hgrow="ALWAYS" />
+                                    <Button text="➕ Añadir" onAction="#onAddBannedPlayer" />
+                                    <Button text="❌ Quitar" onAction="#onRemoveBannedPlayer" />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Banned IPs -->
+                            <VBox spacing="10">
+                                <Label text="IPs Vetadas" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="bannedIpsView" prefHeight="150" />
+                                <HBox spacing="10">
+                                    <TextField fx:id="bannedIPInput" promptText="Ip de jugador..." HBox.hgrow="ALWAYS" />
+                                    <Button text="➕ Añadir" onAction="#onAddBannedIp" />
+                                    <Button text="❌ Quitar" onAction="#onRemoveBannedIp" />
+                                </HBox>
+                            </VBox>
+
+                            <!-- OPs -->
+                            <VBox spacing="10">
+                                <Label text="Operadores (OPs)" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="opsView" prefHeight="150" />
+                                <HBox spacing="10">
+                                    <TextField fx:id="opInput" promptText="Nombre de jugador..." HBox.hgrow="ALWAYS" />
+                                    <Button text="➕ Añadir" onAction="#onAddOp" />
+                                    <Button text="❌ Quitar" onAction="#onRemoveOp" />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Jugadores recientes -->
+                            <VBox spacing="10">
+                                <Label text="Jugadores Recientes" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="recentPlayersView" prefHeight="200" />
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </AnchorPane>
+            </Tab>
+            <Tab text="Mods &amp; Plugins">
+                <AnchorPane>
+                    <VBox spacing="20" style="-fx-padding: 20;">
+                        <!-- Activar Mods / Plugins -->
+                        <HBox spacing="20">
+                            <CheckBox fx:id="enableModsCheckbox" text="Activar Mods" />
+                            <CheckBox fx:id="enablePluginsCheckbox" text="Activar Plugins" />
+                        </HBox>
+
+                        <!-- Sección MODS -->
+                        <TitledPane text="Mods">
+                            <VBox spacing="10" style="-fx-padding: 10;">
+                                <!-- Selectores de Loader y Versión -->
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="Mod Loader:" />
+                                    <ComboBox fx:id="modLoaderComboBox" prefWidth="150" />
+                                    <Label text="Versión del Loader:" />
+                                    <ComboBox fx:id="modLoaderVersionComboBox" prefWidth="150" />
+                                </HBox>
+
+                                <!-- Lista de mods -->
+                                <Label text="Mods instalados" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="modsListView" prefHeight="200" />
+                                <HBox spacing="10">
+                                    <Button text="➕ Añadir Mod" onAction="#AddMod" />
+                                    <Button text="❌ Eliminar Mod" onAction="#RemoveMod" />
+                                </HBox>
+                            </VBox>
+                        </TitledPane>
+
+                        <!-- Sección PLUGINS -->
+                        <TitledPane text="Plugins">
+                            <VBox spacing="10" style="-fx-padding: 10;">
+                                <!-- Selectores de Loader y Versión -->
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="Plugin Loader:" />
+                                    <ComboBox fx:id="pluginLoaderComboBox" prefWidth="150" />
+                                    <Label text="Versión del Loader:" />
+                                    <ComboBox fx:id="pluginLoaderVersionComboBox" prefWidth="150" />
+                                </HBox>
+
+                                <!-- Lista de plugins -->
+                                <Label text="Plugins instalados" style="-fx-font-size: 16px; -fx-text-fill: white;" />
+                                <ListView fx:id="pluginsListView" prefHeight="200" />
+                                <HBox spacing="10">
+                                    <Button text="➕ Añadir Plugin" onAction="#handleAddPlugin" />
+                                    <Button text="❌ Eliminar Plugin" onAction="#handleRemovePlugin" />
+                                </HBox>
+                            </VBox>
+                        </TitledPane>
+                    </VBox>
+                </AnchorPane>
+            </Tab>
+            <Tab text="Consola">
+                <AnchorPane fx:id="consolePane" xmlns:fx="http://javafx.com/fxml">
+                    <VBox spacing="10" style="-fx-padding: 10;" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                        <ScrollPane fx:id="scrollPaneConsole" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
+                            <TextArea fx:id="consoleArea"
+                                      editable="false"
+                                      wrapText="true"
+                                      prefHeight="400"
+                                      prefWidth="600"
+                                      style="-fx-font-family: 'Consolas'; -fx-font-size: 12px;" />
+                        </ScrollPane>
+
+                        <HBox spacing="10">
+                            <TextField fx:id="commandInput" promptText="Escribe un comando..." onKeyPressed="#onCommandKeyPressed" HBox.hgrow="ALWAYS" />
+                            <Button text="Enviar" onAction="#onSendCommand" />
+                            <Button text="📄 Ver Log Completo" onAction="#abrirLogCompleto" />
+                        </HBox>
+                    </VBox>
+                </AnchorPane>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>
